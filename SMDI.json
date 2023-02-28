@@ -1,0 +1,52 @@
+{
+    "model": {
+      "name": "Land Cover Change Detection using PCA",
+      "description": "A model that uses Principal Component Analysis (PCA) to detect changes in land cover over time.",
+      "author": {
+        "name": "HH Wang",
+        "email": "wanghaihung@126.com"
+      },
+      "created_at": "2023-02-27T15:30:00Z",
+      "input": {
+        "type": "GeoTIFF",
+        "description": "A stack of multi-temporal remote sensing images.",
+        "parameters": [
+          {
+            "name": "num_bands",
+            "type": "integer",
+            "default": 7,
+            "description": "The number of bands in each input image."
+          }
+        ]
+      },
+      "output": {
+        "type": "Raster",
+        "description": "A raster image showing the areas of significant land cover change between the input images.",
+        "parameters": [
+          {
+            "name": "threshold",
+            "type": "float",
+            "default": 0.5,
+            "description": "The threshold value for detecting significant changes in land cover."
+          }
+        ]
+      },
+      "algorithm": {
+        "name": "PCA",
+        "description": "Principal Component Analysis is a technique for reducing the dimensionality of data by finding the eigenvectors and eigenvalues of the data covariance matrix.",
+        "language": "Python 3.7",
+        "dependencies": "./requirements.txt"
+      },
+      "framework": {
+        "name": "Flask",
+        "version": "2.1.0",
+        "description": "Flask is a lightweight web framework for Python that provides tools for building web applications quickly and easily.",
+        "port": "0.0.0.0:5000"
+      },
+      "license": {
+        "name": "MIT License",
+        "url": "https://opensource.org/licenses/MIT",
+        "description": "A permissive free software license that allows users to do anything they want with the software, including modifying and distributing it, as long as they include the original copyright notice and license terms."
+      }
+    }
+  }

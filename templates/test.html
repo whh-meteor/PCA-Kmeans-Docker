@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Land Cover Change Detection using PCA</title>
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+
+<body>
+    <!-- <header>
+        <p>Land Cover Change Detection using PCA</p>
+    </header> -->
+    <div class="container">
+        <p class="subtitle">Land Cover Change Detection using PCA</p >
+        <hr>
+        <p><strong>Author:</strong> HH Wang</p>
+        <p><strong>Email:</strong> wanghaihung@126.com</p>
+        <p><strong>Created:</strong> 2023-02-27T15:30:00Z</p>
+        <p><strong>Description:</strong> A model that uses Principal Component Analysis (PCA) to detect changes in land
+            cover over time.</p>
+            <hr>
+        <p class="subtitle">Input Parameters</p >
+            <form action="/PCA_KMeans" method="post" enctype="multipart/form-data" >
+       
+        <div class="param" style="width:600px">
+            <label for="num_bands">num_bands:</label>
+            <input type="number" name="num_bands" id="num_bands" value="7">
+            <p class="description">The number of bands in each input image.</p>
+         
+        </div>
+        <br>
+        <!-- <div class="param">
+        <label > Image for T1: </label>
+        <input type="file"
+         name="img1"
+         multiple 
+         class="file-input"  >
+      
+         <label >Image for T2 : </label>
+        <input type="file" 
+        name="img1"
+         multiple  
+         class="file-input2"  >
+    </div> -->
+                
+    <div class="param">
+        <label for="img1" class="input-label">Image for T1:</label>
+        <div class="file-input-container">
+          <input type="file" name="img1" id="img1" multiple class="file-input" onchange="showFileName(this)">
+          <span class="file-input-label">Choose a file</span>
+        </div>      </div>
+        <div class="param">
+        <label for="img2" class="input-label">Image for T2:</label>
+        <div class="file-input-container">
+          <input type="file" name="img2" id="img2" multiple class="file-input2" onchange="showFileName(this)">
+          <span class="file-input-label">Choose a file</span>
+        </div>
+      </div>
+     
+        <hr>
+        <p class="subtitle">Output Parameters</p >
+        <div class="param" style="width:650px">
+            <label for="threshold">threshold:</label>
+            <input type="number" name="threshold" id="threshold" value="0.5">
+            <p class="description">The threshold value for detecting significant changes in land cover.</p>
+        </div>
+        <button class="btn" id="run-btn">Run Model</button>
+    </form>
+        <div class="output">
+            <label>Output:</label>
+            <img src="" alt="" id="output-img">
+            <p class="description">The resulting image showing the detected changes in land cover over time.</p>
+            <div style="text-align: center">
+                <div>
+                    <img src="data:;base64,{{ T1_Steam }}" alt=" " onerror="this.style.display='none'"  style="display: inline-block; width: 300px;  ">
+                    <img src="data:;base64,{{ T2_Steam }}" alt=" " onerror="this.style.display='none'"  style="display: inline-block; width: 300px;  ">
+            
+                </div>
+                <div>
+                <img src="data:;base64,{{ img_stream }}"alt=" " onerror="this.style.display='none'"  style="display: inline-block; width: 300px;  ">
+                <img src="data:;base64,{{ img_stream2 }}" alt=" "onerror="this.style.display='none'"  style="display: inline-block; width: 300px;  ">
+              </div>
+            </div>
+        </div>
+
+   
+        <hr>
+        <p class="subtitle">Algorithm Details</p >
+        <p>The algorithm used in this model is Principal Component Analysis (PCA). PCA is a technique for reducing the
+            dimensionality of data by finding the eigenvectors and eigenvalues of the data covariance matrix. In this model,
+            PCA is applied to a time series of remote sensing images to identify changes in land cover over time.</p>
+       
+            <hr>
+                 <p class="subtitle">Framework Details</p >
+        <p>This model uses the Flask web framework for Python version 3.7. Flask is a lightweight web framework that
+            provides tools for building web applications quickly and easily. The Flask version used in this model is 2.1.0.
+        </p>
+        <hr>
+        <p class="subtitle">License Details</p >
+        <p>This model is released under the MIT License. The MIT License is a permissive free software license that allows
+            users to do anything they want with the software, including modifying and distributing it, as long as they
+            include the original copyright notice and license terms. For more information, see the <a
+                href="https://opensource.org/licenses/MIT">MIT License</a> page.</p>
+        </div>
+    </div>
+    <style>
+        /*设置字体和背景色*/
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  background-color: #f6f8fa;
+  color: #24292e;
+  margin:0;
+  padding: 0;
+}
+hr {
+  margin: 2rem 0;
+  height: 0.1rem;
+  background-color: #e1e4e8;
+  border: none;
+}
+
+/*设置header样式*/
+/* header {
+  background-color: #24292e;
+  color: #fff;
+  padding: 20px;
+  margin-bottom: 20px;
+} */
+header {
+  background-color: #24292e;
+  color: #fff;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+header p {
+  font-size: 2rem;
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+
+header h1 {
+  margin: 0;
+  font-size: 36px;
+}
+
+/*设置container样式*/
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/*设置参数样式*/
+.param {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.param label {
+ 
+  margin-right: 10px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.param input {
+  flex: 1;
+  padding: 6px 12px;
+  font-size: 16px;
+  border-radius: 3px;
+  border: 1px solid #ccc;
+
+}
+
+.param p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/*设置按钮样式*/
+.btn {
+  display: inline-block;
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 3px;
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.btn:hover {
+  background-color: #218838;
+}
+
+/*设置输出样式*/
+.output {
+  margin-top: 20px;
+}
+
+.output label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.output img {
+  max-width: 100%;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.output p {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+/*设置链接样式*/
+a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+/* Style for input and output parameter sections */
+.param {
+  margin-bottom: 16px;
+}
+.param label {
+  display: inline-block;
+  
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.param input[type=number] {
+  width: 60px;
+  margin-right: 16px;
+}
+.param .description {
+  margin-top: 8px;
+}
+
+.output label {
+  display: inline-block;
+ 
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.output img {
+  max-width: 100%;
+}
+
+/* Style for run button */
+.btn {
+  display: inline-block;
+  padding: 8px 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #fff;
+  background-color: #28a745;
+  border: 1px solid rgba(27,31,35,.2);
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(27,31,35,.04),
+              inset 0 1px 0 hsla(0,0%,100%,.25);
+}
+
+.btn:hover {
+    background-color: #218838;
+  border-color: rgba(27,31,35,.35);
+  box-shadow: 0 1px 0 rgba(27,31,35,.1),
+              inset 0 1px 0 hsla(0,0%,100%,.25);
+}
+
+.btn:active {
+  background-color: #e9ecef;
+  border-color: rgba(27,31,35,.35);
+  box-shadow: inset 0 1px 0 rgba(209,213,218,.2),
+              inset 0 -1px 0 rgba(209,213,218,.2);
+}
+.subtitle {
+    margin-top: 32px;
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #24292e;
+  }
+  
+  .subtitle + p {
+    margin-bottom: 32px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #24292e;
+  }
+ /**文件选择框**/
+ .input-label {
+    font-weight: bold;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+  }
+
+  .file-input-container {
+    display: inline-block;
+    position: relative;
+    width: 200px;
+    height: 35px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  .file-input {
+    position: absolute;
+    font-size: 100px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+  }
+
+  .file-input2 {
+    position: absolute;
+    font-size: 100px;
+    opacity: 0;
+    right: 0;
+    top: 0;
+  }
+
+  .file-input-label {
+    display: block;
+    font-size: 14px;
+    padding: 8px 10px;
+    background-color: #f5f5f5;
+    border-top: 1px solid #ddd;
+    border-radius: 0 0 5px 5px;
+    text-align: center;
+  }
+  .file-input-container:hover .file-input-label {
+    background-color: #e0e0e0;
+  }
+
+  .file-input-container:hover .file-input-label::before {
+    content: '\2192 ';
+  }
+
+      </style>
+
+
+<script>
+   function showFileName(input) {
+    const fileName = input.files[0].name;
+    const fileLabel = input.parentNode.querySelector('.file-input-label');
+    fileLabel.textContent = fileName;
+  }
+  </script>
+</body>
+
+</html>
