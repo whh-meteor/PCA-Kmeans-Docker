@@ -1,0 +1,50 @@
+{
+    "model": {
+      "name": "Land Cover Change Detection using PCA and KMeans",
+      "description": "A model that uses Principal Component Analysis (PCA) and KMeans clustering to detect changes in land cover over time.",
+      "author": {
+        "name": "HH Wang",
+        "email": "wanghaihung@126.com"
+      },
+      "created_at": "2023-02-27",
+      "input": {
+        "type": "GeoTIFF",
+        "description": "A stack of multi-temporal remote sensing images."
+      },
+      "output": {
+        "type": "Raster",
+        "description": "A raster image showing the areas of significant land cover change between the input images."
+      },
+      "parameters": [
+        {
+          "name": "num_components",
+          "type": "integer",
+          "default": 3,
+          "description": "The number of principal components to use in the PCA analysis."
+        },
+        {
+          "name": "num_clusters",
+          "type": "integer",
+          "default": 2,
+          "description": "The number of clusters to use in the KMeans analysis."
+        },
+        {
+          "name": "threshold",
+          "type": "float",
+          "default": 0.5,
+          "description": "The threshold value for detecting significant changes in land cover."
+        }
+      ],
+      "algorithms": [
+        {
+          "name": "PCA",
+          "description": "Principal Component Analysis is a technique for reducing the dimensionality of data by finding the eigenvectors and eigenvalues of the data covariance matrix."
+        },
+        {
+          "name": "KMeans",
+          "description": "KMeans clustering is a technique for grouping similar data points into a fixed number of clusters based on their distance from the cluster centers."
+        }
+      ]
+    }
+  }
+  
