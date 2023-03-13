@@ -7,4 +7,4 @@ ADD . .
 # 配置python环境库
 RUN pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/
 # 启动后台服务
-ENTRYPOINT gunicorn run_predict:app -c gunicorn.conf.py
+ENTRYPOINT gunicorn run_predict:app -c gunicorn.conf.py --timeout 0
